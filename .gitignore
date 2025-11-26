@@ -1,0 +1,21 @@
+# Maven
+/target/
+
+# IntelliJ
+*.iml
+.idea/
+
+# Eclipse
+.classpath
+.project
+.settings/
+
+# Logs
+*.log
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Lombok generated
+*.class
