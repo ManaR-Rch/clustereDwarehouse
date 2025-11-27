@@ -1,48 +1,79 @@
 package com.example.demo.exception;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.ProblemDetail;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.net.URI;
 
-@ControllerAdvice
+@RestControllerAdvice
 public class GlobalExceptionHandler {
 
-  @ExceptionHandler(MethodArgumentNotValidException.class)
-  public ResponseEntity<Map<String, Object>> handleValidation(MethodArgumentNotValidException ex) {
-    String message = ex.getBindingResult()
-        .getFieldErrors()
-        .stream()
-        .map(fe -> fe.getField() + ": " + fe.getDefaultMessage())
-        .collect(Collectors.joining("; "));
 
-    Map<String, Object> body = new HashMap<>();
-    body.put("message", message.isEmpty() ? "Validation failed" : message);
-    body.put("timestamp", LocalDateTime.now().toString());
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ProblemDetail handleValidation(MethodArgumentNotValidException ex) {
 
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
-  }
+        ProblemDetail problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+        problem.setTitle("Validation failed");
+        problem.setType(URI.create("/errors/validation"));
 
-  @ExceptionHandler(IllegalArgumentException.class)
-  public ResponseEntity<Map<String, Object>> handleIllegalArg(IllegalArgumentException ex) {
-    Map<String, Object> body = new HashMap<>();
-    body.put("message", ex.getMessage());
-    body.put("timestamp", LocalDateTime.now().toString());
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
-  }
+    
+        String detail = ex.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(err -> err.getField() + ": " + err.getDefaultMessage())
+                .reduce("", (a, b) -> a + "; " + b);
 
-  @ExceptionHandler(RuntimeException.class)
-  public ResponseEntity<Map<String, Object>> handleRuntime(RuntimeException ex) {
-    Map<String, Object> body = new HashMap<>();
-    body.put("message", ex.getMessage() == null ? "Internal server error" : ex.getMessage());
-    body.put("timestamp", LocalDateTime.now().toString());
-    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body);
-  }
+        problem.setDetail(detail);
 
+        problem.setProperty("errors", ex.getBindingResult().getFieldErrors()
+                .stream()
+                .collect(java.util.stream.Collectors.toMap(
+                        FieldError::getField,
+                        FieldError::getDefaultMessage
+                ))
+        );
+
+        return problem;
+    }
+
+ 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ProblemDetail handleIllegalArg(IllegalArgumentException ex) {
+
+        ProblemDetail problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+        problem.setTitle("Invalid argument");
+        problem.setType(URI.create("/errors/invalid-argument"));
+        problem.setDetail(ex.getMessage());
+
+        return problem;
+    }
+
+ 
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ProblemDetail handleBadJson(HttpMessageNotReadableException ex) {
+
+        ProblemDetail problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+        problem.setTitle("Malformed JSON body");
+        problem.setType(URI.create("/errors/bad-json"));
+        problem.setDetail("Invalid request body or wrong data format");
+
+        return problem;
+    }
+
+  
+    @ExceptionHandler(Exception.class)
+    public ProblemDetail handleGeneral(Exception ex) {
+
+        ProblemDetail problem = ProblemDetail.forStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+        problem.setTitle("Internal server error");
+        problem.setType(URI.create("/errors/server"));
+        problem.setDetail(ex.getMessage());
+
+        return problem;
+    }
 }
