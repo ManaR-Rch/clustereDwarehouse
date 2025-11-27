@@ -1,20 +1,36 @@
 # 💱 ClusteredData Warehouse – FX Deals
 
-## 📋 Description
+<div align="center">
 
-Application **Spring Boot** professionnelle conçue pour gérer un entrepôt de données de transactions forex (FX Deals) destiné à des systèmes d'information financière type Bloomberg.
+![Java](https://img.shields.io/badge/Java-17-blue?logo=java&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.1-green?logo=springboot&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-blue?logo=postgresql&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)
+![Maven](https://img.shields.io/badge/Maven-3.8-C71A36?logo=apachemaven&logoColor=white)
 
-Le système assure l'**intégrité**, la **traçabilité** et la **fiabilité** des données de change en temps réel avec une architecture scalable et containerisée.
+**A robust solution for centralized forex transaction management**
 
-### ✨ Fonctionnalités
+[Features](#-features) • [Installation](#-installation) • [API](#-api) • [Testing](#-testing)
 
-- 📥 **Import de deals** avec validation complète des champs métier
-- 🔒 **Prévention des doublons** via identifiant unique
-- ✅ **Validation rigoureuse** : formats ISO, montants, devises
-- 💾 **Persistance PostgreSQL** avec transactions ACID
-- 🚨 **Gestion avancée des erreurs** avec messages explicites
-- 🐳 **Déploiement Docker** prêt pour la production
-- 🧪 **Tests unitaires** avec JUnit 5 et Mockito
+</div>
+
+---
+
+## 📋 Overview
+
+Professional **Spring Boot** application designed to manage a data warehouse of forex transactions (FX Deals) for financial information systems like Bloomberg.
+
+The system ensures **integrity**, **traceability**, and **reliability** of real-time currency exchange data with a scalable, containerized architecture.
+
+### ✨ Features
+
+- 📥 **Deal import** with comprehensive business field validation
+- 🔒 **Duplicate prevention** via unique identifier
+- ✅ **Rigorous validation**: ISO formats, amounts, currencies
+- 💾 **PostgreSQL persistence** with ACID transactions
+- 🚨 **Advanced error handling** with explicit messages
+- 🐳 **Production-ready Docker** deployment
+- 🧪 **Unit testing** with JUnit 5 and Mockito
 
 ---
 
@@ -27,50 +43,50 @@ Le système assure l'**intégrité**, la **traçabilité** et la **fiabilité** 
 └─────────────┘      └──────────────┘      └─────────────┘
 ```
 
-**Stack Technique**
+**Tech Stack**
 
-| Technologie | Version | Rôle |
+| Technology | Version | Role |
 |------------|---------|------|
-| Java | 17 | Langage principal |
-| Spring Boot | 3.1+ | Framework backend |
-| PostgreSQL | 15 | Base de données |
-| Docker | Latest | Containerisation |
-| Maven | 3.8+ | Gestion des dépendances |
-| JUnit 5 | 5.9+ | Tests unitaires |
+| Java | 17 | Primary language |
+| Spring Boot | 3.1+ | Backend framework |
+| PostgreSQL | 15 | Database |
+| Docker | Latest | Containerization |
+| Maven | 3.8+ | Dependency management |
+| JUnit 5 | 5.9+ | Unit testing |
 
 ---
 
 ## 🚀 Installation
 
-### Prérequis
+### Prerequisites
 
-- Docker Desktop installé
+- Docker Desktop installed
 - Git
-- (Optionnel) Java 17 et Maven pour développement local
+- (Optional) Java 17 and Maven for local development
 
-### Démarrage rapide
+### Quick Start
 
 ```bash
-# 1. Cloner le repository
-git clone https://github.com/<votre-utilisateur>/clustered-data-warehouse.git
+# 1. Clone the repository
+git clone https://github.com/ManaR-Rch/clustered-data-warehouse.git
 cd clustered-data-warehouse
 
-# 2. Lancer avec Docker Compose
+# 2. Launch with Docker Compose
 docker-compose up --build
 
-# 3. L'API est disponible sur
+# 3. API available at
 # http://localhost:8080
 ```
 
-### Démarrage en local (sans Docker)
+### Local Setup (without Docker)
 
 ```bash
-# 1. Démarrer PostgreSQL localement sur le port 5432
+# 1. Start PostgreSQL locally on port 5432
 
-# 2. Créer la base de données
+# 2. Create the database
 createdb fxdeals
 
-# 3. Builder et lancer l'application
+# 3. Build and run the application
 mvn clean install
 mvn spring-boot:run
 ```
@@ -79,11 +95,11 @@ mvn spring-boot:run
 
 ## 📡 API
 
-### Endpoint principal
+### Main Endpoint
 
 #### **POST** `/api/deals`
 
-Importe un nouveau deal forex dans le système.
+Import a new forex deal into the system.
 
 **Request Body**
 
@@ -97,7 +113,7 @@ Importe un nouveau deal forex dans le système.
 }
 ```
 
-**Response Success (201 Created)**
+**Success Response (201 Created)**
 
 ```json
 {
@@ -110,7 +126,7 @@ Importe un nouveau deal forex dans le système.
 }
 ```
 
-**Response Error (400 Bad Request)**
+**Error Response (400 Bad Request)**
 
 ```json
 {
@@ -121,20 +137,20 @@ Importe un nouveau deal forex dans le système.
 }
 ```
 
-### Validation des champs
+### Field Validation
 
-| Champ | Type | Contraintes |
+| Field | Type | Constraints |
 |-------|------|-------------|
-| `dealId` | String | Obligatoire, unique |
-| `fromCurrency` | String | Code ISO 4217 (3 lettres) |
-| `toCurrency` | String | Code ISO 4217 (3 lettres) |
-| `timestamp` | ISO DateTime | Format ISO-8601 |
+| `dealId` | String | Required, unique |
+| `fromCurrency` | String | ISO 4217 code (3 letters) |
+| `toCurrency` | String | ISO 4217 code (3 letters) |
+| `timestamp` | ISO DateTime | ISO-8601 format |
 | `amount` | Decimal | > 0 |
 
-### Exemples avec cURL
+### cURL Examples
 
 ```bash
-# Import d'un deal valide
+# Import a valid deal
 curl -X POST http://localhost:8080/api/deals \
   -H "Content-Type: application/json" \
   -d '{
@@ -145,7 +161,7 @@ curl -X POST http://localhost:8080/api/deals \
     "amount": 5000.00
   }'
 
-# Tentative de doublon (renvoie 400)
+# Duplicate attempt (returns 400)
 curl -X POST http://localhost:8080/api/deals \
   -H "Content-Type: application/json" \
   -d '{
@@ -159,30 +175,30 @@ curl -X POST http://localhost:8080/api/deals \
 
 ---
 
-## 🧪 Tests
+## 🧪 Testing
 
 ```bash
-# Exécuter tous les tests
+# Run all tests
 mvn test
 
-# Tests avec rapport de couverture
+# Tests with coverage report
 mvn clean verify
 
-# Tests d'une classe spécifique
+# Test specific class
 mvn test -Dtest=FxDealServiceTest
 ```
 
-**Couverture des tests**
-- Tests unitaires des services
-- Tests d'intégration des repositories
-- Validation des endpoints REST
-- Gestion des cas d'erreur
+**Test Coverage**
+- Service layer unit tests
+- Repository integration tests
+- REST endpoint validation
+- Error case handling
 
 ---
 
-## 🐳 Configuration Docker
+## 🐳 Docker Configuration
 
-**Structure des conteneurs**
+**Container Structure**
 
 ```yaml
 services:
@@ -193,28 +209,28 @@ services:
   
   app:
     - Port: 8080
-    - Dépend de: postgres
+    - Depends on: postgres
 ```
 
-**Commandes Docker utiles**
+**Useful Docker Commands**
 
 ```bash
-# Démarrer en mode détaché
+# Start in detached mode
 docker-compose up -d
 
-# Voir les logs
+# View logs
 docker-compose logs -f app
 
-# Arrêter les services
+# Stop services
 docker-compose down
 
-# Nettoyer volumes et images
+# Clean volumes and images
 docker-compose down -v --rmi all
 ```
 
 ---
 
-## 📁 Structure du projet
+## 📁 Project Structure
 
 ```
 clustered-data-warehouse/
@@ -228,7 +244,7 @@ clustered-data-warehouse/
 │   │   │   └── exception/       # Error Handling
 │   │   └── resources/
 │   │       └── application.properties
-│   └── test/                    # Tests unitaires
+│   └── test/                    # Unit tests
 ├── docker-compose.yml
 ├── Dockerfile
 ├── pom.xml
@@ -257,36 +273,36 @@ server.port=8080
 
 ---
 
-## 🤝 Contribution
+## 🤝 Contributing
 
-Les contributions sont les bienvenues ! 
+Contributions are welcome!
 
-1. Forkez le projet
-2. Créez une branche feature (`git checkout -b feature/AmazingFeature`)
-3. Committez vos changements (`git commit -m 'Add AmazingFeature'`)
-4. Pushez vers la branche (`git push origin feature/AmazingFeature`)
-5. Ouvrez une Pull Request
-
----
-
-## 📄 Licence
-
-Ce projet est sous licence MIT. Voir le fichier `LICENSE` pour plus de détails.
+1. Fork the project
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
 ---
 
-## 👤 Auteur
+## 📄 License
 
-**Votre Nom**
+This project is licensed under the MIT License. See the `LICENSE` file for details.
 
-- GitHub: [@votre-utilisateur](https://github.com/votre-utilisateur)
-- LinkedIn: [Votre Profil](https://linkedin.com/in/votre-profil)
+---
+
+## 👤 Author
+
+**Your Name**
+
+- GitHub: [@your-username](https://github.com/ManaR-Rch)
+- LinkedIn: [Your Profile](https://www.linkedin.com/in/manar-marchoube-a955a9337/)
 
 ---
 
 <div align="center">
 
-**⭐ N'oubliez pas de star le projet si vous l'avez trouvé utile !**
+**⭐ Don't forget to star the project if you found it useful!**
 
 Made with ❤️ for Bloomberg Data Warehouse
 
