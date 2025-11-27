@@ -15,16 +15,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/deals")
 public class DealController {
 
-    private final DealService dealService;
+  private final DealService dealService;
 
-    public DealController(DealService dealService) {
-        this.dealService = dealService;
-    }
+  public DealController(DealService dealService) {
+    this.dealService = dealService;
+  }
 
-    @PostMapping
-    public ResponseEntity<DealResponseDto> createDeal(@Valid @RequestBody DealRequestDto request) {
-        DealResponseDto response = dealService.createDeal(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
+  @PostMapping
+  public ResponseEntity<DealResponseDto> createDeal(@Valid @RequestBody DealRequestDto request) {
+    DealResponseDto response = dealService.createDeal(request);
+    return ResponseEntity.status(HttpStatus.CREATED).body(response);
+  }
 
 }

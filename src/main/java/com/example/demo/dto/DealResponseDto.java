@@ -1,6 +1,7 @@
 package com.example.demo.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,12 +11,14 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class DealResponseDto {
 
-    private String id;
-    private String fromCurrency;
-    private String toCurrency;
-    private LocalDateTime timestamp;
-    private BigDecimal amount;
+  private String id;
+  private String fromCurrency;
+  private String toCurrency;
+  private LocalDateTime timestamp;
+  private BigDecimal amount;
+
 
 }

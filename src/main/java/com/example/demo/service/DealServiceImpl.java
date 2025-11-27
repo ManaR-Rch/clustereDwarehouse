@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.dto.DealRequestDto;
 import com.example.demo.dto.DealResponseDto;
+import com.example.demo.mapper.DealMapper;
 import com.example.demo.model.Deal;
 import com.example.demo.repository.DealRepository;
 import org.springframework.stereotype.Service;
@@ -10,14 +11,18 @@ import org.springframework.stereotype.Service;
 public class DealServiceImpl implements DealService {
 
     private final DealRepository repository;
+    private final DealMapper mapper;
 
-    public DealServiceImpl(DealRepository repository) {
+    public DealServiceImpl(DealRepository repository, DealMapper mapper) {
         this.repository = repository;
+        this.mapper = mapper;
     }
 
     @Override
     public DealResponseDto createDeal(DealRequestDto request) {
-        if (request.getFromCurrency() != null && request.getFromCurrency().equals(request.getToCurrency())) {
+
+        if (request.getFromCurrency() != null &&
+            request.getFromCurrency().equals(request.getToCurrency())) {
             throw new IllegalArgumentException("fromCurrency and toCurrency must be different");
         }
 
@@ -25,29 +30,12 @@ public class DealServiceImpl implements DealService {
             throw new IllegalArgumentException("Deal with id " + request.getId() + " already exists");
         }
 
-        Deal entity = toEntity(request);
+        Deal entity = mapper.toEntity(request);
+
+        
         Deal saved = repository.save(entity);
-        return toResponse(saved);
-    }
 
-    private Deal toEntity(DealRequestDto dto) {
-        Deal d = new Deal();
-        d.setId(dto.getId());
-        d.setFromCurrency(dto.getFromCurrency());
-        d.setToCurrency(dto.getToCurrency());
-        d.setTimestamp(dto.getTimestamp());
-        d.setAmount(dto.getAmount());
-        return d;
+       
+        return mapper.toResponse(saved);
     }
-
-    private DealResponseDto toResponse(Deal entity) {
-        return new DealResponseDto(
-                entity.getId(),
-                entity.getFromCurrency(),
-                entity.getToCurrency(),
-                entity.getTimestamp(),
-                entity.getAmount()
-        );
-    }
-
 }

@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.dto.DealRequestDto;
 import com.example.demo.dto.DealResponseDto;
+import com.example.demo.mapper.DealMapper;
 import com.example.demo.model.Deal;
 import com.example.demo.repository.DealRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,64 +23,71 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class DealServiceImplTest {
 
+  @Mock
+  private DealRepository repository;
     @Mock
-    private DealRepository repository;
+    private DealMapper mapper;
+  @InjectMocks
+  private DealServiceImpl service;
+  @Mock
+  private DealRequestDto validRequest;
 
-    @InjectMocks
-    private DealServiceImpl service;
-
-    private DealRequestDto validRequest;
-
-    @BeforeEach
-    void setUp() {
-        validRequest = new DealRequestDto(
-                "d1",
-                "EUR",
-                "USD",
-                LocalDateTime.now(),
-                new BigDecimal("100.00")
-        );
-    }
+  @BeforeEach
+  void setUp() {
+    validRequest = new DealRequestDto(
+        "d1",
+        "EUR",
+        "USD",
+        LocalDateTime.now(),
+        new BigDecimal("100.00"));
+  }
 
     @Test
     void createDeal_success() {
         when(repository.existsById("d1")).thenReturn(false);
 
-        ArgumentCaptor<Deal> captor = ArgumentCaptor.forClass(Deal.class);
-        Deal returned = new Deal("d1", "EUR", "USD", validRequest.getTimestamp(), validRequest.getAmount());
-        when(repository.save(any(Deal.class))).thenReturn(returned);
+        Deal entity = new Deal("d1", "EUR", "USD", validRequest.getTimestamp(), validRequest.getAmount());
+        Deal saved = new Deal("d1", "EUR", "USD", validRequest.getTimestamp(), validRequest.getAmount());
 
-        DealResponseDto response = service.createDeal(validRequest);
+        DealResponseDto responseDto = new DealResponseDto(
+                "d1", "EUR", "USD", validRequest.getTimestamp(), validRequest.getAmount()
+        );
 
-        verify(repository).existsById("d1");
-        verify(repository).save(captor.capture());
+        // mock mapper
+        when(mapper.toEntity(validRequest)).thenReturn(entity);
+        when(repository.save(entity)).thenReturn(saved);
+        when(mapper.toResponse(saved)).thenReturn(responseDto);
 
-        Deal saved = captor.getValue();
-        assertThat(saved.getId()).isEqualTo("d1");
-        assertThat(response.getId()).isEqualTo("d1");
-        assertThat(response.getFromCurrency()).isEqualTo("EUR");
+        DealResponseDto result = service.createDeal(validRequest);
+
+        assertThat(result.getId()).isEqualTo("d1");
+        assertThat(result.getFromCurrency()).isEqualTo("EUR");
+
+        verify(mapper).toEntity(validRequest);
+        verify(repository).save(entity);
+        verify(mapper).toResponse(saved);
     }
 
     @Test
-    void createDeal_sameCurrency_throws() {
-        DealRequestDto req = new DealRequestDto("d2", "USD", "USD", LocalDateTime.now(), BigDecimal.ONE);
-        assertThatThrownBy(() -> service.createDeal(req))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("fromCurrency and toCurrency must be different");
+  void createDeal_sameCurrency_throws() {
+    DealRequestDto req = new DealRequestDto("d2", "USD", "USD", LocalDateTime.now(), BigDecimal.ONE);
+    assertThatThrownBy(() -> service.createDeal(req))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("fromCurrency and toCurrency must be different");
 
-        verifyNoInteractions(repository);
-    }
+    verifyNoInteractions(repository);
+  }
 
-    @Test
-    void createDeal_existingId_throws() {
-        when(repository.existsById("d1")).thenReturn(true);
+  @Test
+  void createDeal_existingId_throws() {
+    when(repository.existsById("d1")).thenReturn(true);
 
-        assertThatThrownBy(() -> service.createDeal(validRequest))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Deal with id d1 already exists");
+    assertThatThrownBy(() -> service.createDeal(validRequest))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessageContaining("Deal with id d1 already exists");
 
-        verify(repository).existsById("d1");
-        verify(repository, never()).save(any());
-    }
+    verify(repository).existsById("d1");
+    verify(repository, never()).save(any());
+  }
 
 }

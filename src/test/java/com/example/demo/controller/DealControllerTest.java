@@ -20,23 +20,23 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class DealControllerTest {
 
-    @Mock
-    private DealService dealService;
+  @Mock
+  private DealService dealService;
 
-    @InjectMocks
-    private DealController controller;
+  @InjectMocks
+  private DealController controller;
 
-    @Test
-    void createDeal_returnsCreated() {
-        DealRequestDto request = new DealRequestDto("d1", "EUR", "USD", LocalDateTime.now(), new BigDecimal("10.0"));
-        DealResponseDto resp = new DealResponseDto("d1", "EUR", "USD", request.getTimestamp(), request.getAmount());
+  @Test
+  void createDeal_returnsCreated() {
+    DealRequestDto request = new DealRequestDto("d1", "EUR", "USD", LocalDateTime.now(), new BigDecimal("10.0"));
+    DealResponseDto resp = new DealResponseDto("d1", "EUR", "USD", request.getTimestamp(), request.getAmount());
 
-        when(dealService.createDeal(request)).thenReturn(resp);
+    when(dealService.createDeal(request)).thenReturn(resp);
 
-        ResponseEntity<DealResponseDto> result = controller.createDeal(request);
+    ResponseEntity<DealResponseDto> result = controller.createDeal(request);
 
-        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        assertThat(result.getBody()).isEqualTo(resp);
-    }
+    assertThat(result.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+    assertThat(result.getBody()).isEqualTo(resp);
+  }
 
 }

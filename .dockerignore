@@ -1,0 +1,6 @@
+target
+.mvn
+.git
+**/node_modules
+Dockerfile
+*.jar
