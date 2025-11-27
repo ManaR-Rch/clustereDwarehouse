@@ -290,8 +290,8 @@ This project is licensed under the MIT License. See the `LICENSE` file for detai
 
 **Your Name**
 
-- GitHub: [GitHub](https://github.com/ManaR-Rch)
-- LinkedIn: [linkedin](https://www.linkedin.com/in/manar-marchoube-a955a9337/)
+- GitHub: [@ManaR-Rch](https://github.com/ManaR-Rch)
+- LinkedIn: [MARCHOUBE Manar](https://www.linkedin.com/in/manar-marchoube-a955a9337/)
 
 ---
 
