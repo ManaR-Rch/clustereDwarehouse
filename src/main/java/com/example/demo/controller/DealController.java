@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/deals")
+@RequestMapping({ "/api/deals", "/deals" })
 public class DealController {
 
   private final DealService dealService;
