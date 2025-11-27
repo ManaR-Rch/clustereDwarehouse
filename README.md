@@ -6,7 +6,6 @@
 
 **A robust solution for centralized forex transaction management**
 
-[Features](#-features) • [Installation](#-installation) • [API](#-api) • [Testing](#-testing)
 
 </div>
 
@@ -291,8 +290,8 @@ This project is licensed under the MIT License. See the `LICENSE` file for detai
 
 **Your Name**
 
-- GitHub: [@your-username](https://github.com/ManaR-Rch)
-- LinkedIn: [Your Profile](https://www.linkedin.com/in/manar-marchoube-a955a9337/)
+- GitHub: [GitHub](https://github.com/ManaR-Rch)
+- LinkedIn: [linkedin](https://www.linkedin.com/in/manar-marchoube-a955a9337/)
 
 ---
 
